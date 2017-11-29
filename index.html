@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+		<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+		<link rel="stylesheet" type="text/css" href="bootstrap.min.css"/>
+		
+		<title>Reto Liverpool</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+	</head>
+	<body ng-app="retoLiverpool">
+		<div class="container" ng-controller="busqueda">
+			<div class="jumbotron">
+				<h1>Reto Liverpool</h1>
+				<p>Escribe el nombre de un producto que quieras buscar</p>
+				<p>Producto: <input type="text"  ng-model="producto" placeholder="Escribe un producto"/></p>
+				<a ng-click="buscaProducto()" class="btn btn-default">Buscar </a>
+				<p>Buscaste: </p>
+			</div>
+			<div class="row">
+				<div class="panel panel-default col-md-3" ng-repeat="product in products">
+					<div class="panel-heading">{{product['product.displayName'][0]}}</div> 
+					<div class="panel-body text-center">
+						<img ng-src="{{product['product.smallImage'][0]}}">
+						<p>Precio de lista: {{product['sku.list_Price'][0] | currency:"$ ":2}}</p>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	  <script>
+		angular.module('retoLiverpool', [])
+			.controller('busqueda', ['$scope', '$http', function($scope, $http) {
+				$scope.buscaProducto = function() {
+					var productoString;
+					productoString = $scope.producto.replace(/\s/g, '+');
+					var url = 'https://www.liverpool.com.mx/tienda/?s='+ productoString +'&d3106047a194921c01969dfdec083925=json';
+					$scope.url = url;
+					//"https://www.liverpool.com.mx/tienda/?s=moto+z&d3106047a194921c01969dfdec083925=json"
+					$http.get(url)
+						.then(function(response) {
+							var json = response.data;
+							$scope.jsonResponse = response.data;
+							//console.log(json.contents[0].mainContent[3].contents[0]);
+							$scope.products = [];
+							angular.forEach(json.contents[0].mainContent[3].contents[0].records, function(value) {
+								$scope.products.push(value.records[0].attributes);
+								//console.log(value.records[0].attributes);
+							});
+						})
+						.catch(function(response) {
+							console.error('Error :', response.status, response.data);
+						})
+						.finally(function() {
+							console.log("Done");
+						});
+				};
+			}]);
+	  </script>
+	</body>
+	
+</html>
