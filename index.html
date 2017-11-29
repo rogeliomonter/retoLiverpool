@@ -22,7 +22,7 @@
 				<p>
 					Buscaste: 
 					<div ng-repeat="search in searchHistory">
-						<span class="btn btn-primary btn-lg">{{search.searchQuery | myFormat}}</span>
+						<span class="btn btn-primary btn-lg">{{$index + 1}}. {{search.searchQuery | myFormat}}</span>
 					</div>
 				</p>
 			</div>
@@ -56,7 +56,7 @@
 						$cookies.putObject(cookieName, searchHistoryJson);
 					}
 					var tmp = $cookies.getObject(cookieName);
-					console.log(tmp);
+					//console.log(tmp);
 					$scope.searchHistory = [];
 					angular.forEach(tmp.history, function(value) {
 								$scope.searchHistory.push(value);
@@ -103,7 +103,28 @@
 						searchHistoryJson.history = [{'searchQuery' : productoString}];
 						$cookies.putObject(cookieName, searchHistoryJson);
 					}*/
-				};			
+				};
+				$scope.buscaProductoHistorico = function(productoString){
+					var url = 'https://www.liverpool.com.mx/tienda/?s='+ productoString +'&d3106047a194921c01969dfdec083925=json';
+					$scope.url = url;
+					//"https://www.liverpool.com.mx/tienda/?s=moto+z&d3106047a194921c01969dfdec083925=json"
+					$http.get(url)
+						.then(function(response) {
+							var json = response.data;
+							$scope.jsonResponse = response.data;
+							//console.log(json.contents[0].mainContent[3].contents[0]);
+							$scope.products = [];
+							angular.forEach(json.contents[0].mainContent[3].contents[0].records, function(value) {
+								$scope.products.push(value.records[0].attributes);
+							});
+						})
+						.catch(function(response) {
+							console.error('Error :', response.status, response.data);
+						})
+						.finally(function() {
+							console.log("Done");
+						});
+				};
 			}]);
 			app.filter('myFormat', function() {
 				return function(input) {
