@@ -20,18 +20,20 @@
 				<p>Producto: <input type="text"  ng-model="producto" placeholder="Escribe un producto"/></p>
 				<a ng-click="buscaProducto()" class="btn btn-default">Buscar </a>
 				<p>
-					Buscaste: 
+					Buscaste anteriormente: 
 					<div ng-repeat="search in searchHistory">
-						<span class="btn btn-primary btn-lg">{{$index + 1}}. {{search.searchQuery | myFormat}}</span>
+						<span class="btn btn-primary btn-lg" style="display: inline-block; margin: 10px;">{{$index + 1}}. {{search.searchQuery | myFormat}}</span>
 					</div>
 				</p>
 			</div>
-			<div class="row">
-				<div class="panel panel-default col-md-3" ng-repeat="product in products">
-					<div class="panel-heading">{{product['product.displayName'][0]}}</div> 
-					<div class="panel-body text-center">
-						<img ng-src="{{product['product.smallImage'][0]}}">
-						<p>Precio de lista: {{product['sku.list_Price'][0] | currency:"$ ":2}}</p>
+			<div class="container">
+				<div class="row">
+					<div class="panel panel-default col-md-3" ng-repeat="product in products">
+						<div class="panel-heading">{{product['product.displayName'][0]}}</div> 
+						<div class="panel-body text-center">
+							<img ng-src="{{product['product.smallImage'][0]}}">
+							<p>Precio de lista: {{product['sku.list_Price'][0] | currency:"$ ":2}}</p>
+						</div>
 					</div>
 				</div>
 			</div>
