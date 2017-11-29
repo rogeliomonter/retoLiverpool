@@ -38,29 +38,28 @@
 				$scope.buscaProducto = function() {
 					var productoString = $scope.producto.replace(/\s/g, '+');
 					var cookieName = 'cookieProductosHistorial';
-					var searchHistoryJson = [];
-					searchHistoryJson.push(productoString);
-					//angular.forEach(searchHistoryJson, function(value) {
-						console.log(searchHistoryJson);
-					//});
+					//var searchHistoryJson = {};
+					//searchHistoryJson.history = [{'searchQuery' : productoString}];
+					//console.log(searchHistoryJson);
 					var prodSearchHistoryCookie = $cookies.get(cookieName);
-					/*var searchHistoryJson = {
-						"id" 			: 1,
-						"searchQuery" 	: productoString
-					};*/
+
 					if ( prodSearchHistoryCookie ) {
-						searchHistoryJson = $cookies.get(cookieName);
-						//searchHistoryJson.push(productoString);
-						$cookies.put(cookieName, searchHistoryJson);
+						searchHistoryJson = $cookies.getObject(cookieName);
+						searchHistoryJson.history.push({'searchQuery' : productoString});
+						$cookies.putObject(cookieName, searchHistoryJson);
 					} else {
 						//searchHistoryJson.push(productoString);
-						$cookies.put(cookieName, searchHistoryJson);
+						var searchHistoryJson = {};
+						searchHistoryJson.history = [{'searchQuery' : productoString}];
+						$cookies.putObject(cookieName, searchHistoryJson);
 					}
-					/*
-					var tmp = $cookies.get(cookieName);
-					//angular.forEach(tmp, function(value) {
-						console.log(tmp.toString());
-					//});*/
+					var tmp = $cookies.getObject(cookieName);
+					console.log(tmp);
+					angular.forEach(tmp.history, function(value) {
+								//$scope.products.push(value.records[0].attributes);
+								console.log(value.searchQuery);
+							});
+					//console.log($cookies.getObject(cookieName));
 					
 					var url = 'https://www.liverpool.com.mx/tienda/?s='+ productoString +'&d3106047a194921c01969dfdec083925=json';
 					$scope.url = url;
