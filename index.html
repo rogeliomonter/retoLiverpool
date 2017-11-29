@@ -3,7 +3,9 @@
 	<head>
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		
 		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/angular-cookies.min.js"></script>
 		<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
 		<link rel="stylesheet" type="text/css" href="bootstrap.min.css"/>
 		
@@ -31,11 +33,35 @@
 		</div>
 
 	  <script>
-		angular.module('retoLiverpool', [])
-			.controller('busqueda', ['$scope', '$http', function($scope, $http) {
+		angular.module('retoLiverpool', ['ngCookies'])
+			.controller('busqueda', ['$scope', '$http', '$cookies', function($scope, $http, $cookies) {
 				$scope.buscaProducto = function() {
-					var productoString;
-					productoString = $scope.producto.replace(/\s/g, '+');
+					var productoString = $scope.producto.replace(/\s/g, '+');
+					var cookieName = 'cookieProductosHistorial';
+					var searchHistoryJson = [];
+					searchHistoryJson.push(productoString);
+					//angular.forEach(searchHistoryJson, function(value) {
+						console.log(searchHistoryJson);
+					//});
+					var prodSearchHistoryCookie = $cookies.get(cookieName);
+					/*var searchHistoryJson = {
+						"id" 			: 1,
+						"searchQuery" 	: productoString
+					};*/
+					if ( prodSearchHistoryCookie ) {
+						searchHistoryJson = $cookies.get(cookieName);
+						//searchHistoryJson.push(productoString);
+						$cookies.put(cookieName, searchHistoryJson);
+					} else {
+						//searchHistoryJson.push(productoString);
+						$cookies.put(cookieName, searchHistoryJson);
+					}
+					/*
+					var tmp = $cookies.get(cookieName);
+					//angular.forEach(tmp, function(value) {
+						console.log(tmp.toString());
+					//});*/
+					
 					var url = 'https://www.liverpool.com.mx/tienda/?s='+ productoString +'&d3106047a194921c01969dfdec083925=json';
 					$scope.url = url;
 					//"https://www.liverpool.com.mx/tienda/?s=moto+z&d3106047a194921c01969dfdec083925=json"
