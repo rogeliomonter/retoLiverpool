@@ -19,7 +19,12 @@
 				<p>Escribe el nombre de un producto que quieras buscar</p>
 				<p>Producto: <input type="text"  ng-model="producto" placeholder="Escribe un producto"/></p>
 				<a ng-click="buscaProducto()" class="btn btn-default">Buscar </a>
-				<p>Buscaste: </p>
+				<p>
+					Buscaste: 
+					<div ng-repeat="search in searchHistory">
+						<span class="label label-primary">{{search.searchQuery}}</span>
+					</div>
+				</p>
 			</div>
 			<div class="row">
 				<div class="panel panel-default col-md-3" ng-repeat="product in products">
@@ -38,9 +43,7 @@
 				$scope.buscaProducto = function() {
 					var productoString = $scope.producto.replace(/\s/g, '+');
 					var cookieName = 'cookieProductosHistorial';
-					//var searchHistoryJson = {};
-					//searchHistoryJson.history = [{'searchQuery' : productoString}];
-					//console.log(searchHistoryJson);
+
 					var prodSearchHistoryCookie = $cookies.get(cookieName);
 
 					if ( prodSearchHistoryCookie ) {
@@ -48,18 +51,18 @@
 						searchHistoryJson.history.push({'searchQuery' : productoString});
 						$cookies.putObject(cookieName, searchHistoryJson);
 					} else {
-						//searchHistoryJson.push(productoString);
 						var searchHistoryJson = {};
 						searchHistoryJson.history = [{'searchQuery' : productoString}];
 						$cookies.putObject(cookieName, searchHistoryJson);
 					}
 					var tmp = $cookies.getObject(cookieName);
 					console.log(tmp);
+					$scope.searchHistory = [];
 					angular.forEach(tmp.history, function(value) {
-								//$scope.products.push(value.records[0].attributes);
+								$scope.searchHistory.push(value);
 								console.log(value.searchQuery);
 							});
-					//console.log($cookies.getObject(cookieName));
+					
 					
 					var url = 'https://www.liverpool.com.mx/tienda/?s='+ productoString +'&d3106047a194921c01969dfdec083925=json';
 					$scope.url = url;
@@ -72,7 +75,7 @@
 							$scope.products = [];
 							angular.forEach(json.contents[0].mainContent[3].contents[0].records, function(value) {
 								$scope.products.push(value.records[0].attributes);
-								//console.log(value.records[0].attributes);
+								
 							});
 						})
 						.catch(function(response) {
