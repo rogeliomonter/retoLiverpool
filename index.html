@@ -13,7 +13,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 	</head>
 	<body ng-app="retoLiverpool">
-		<div class="container" ng-controller="busqueda">
+		<div class="container" ng-controller="busqueda" ng-init="muestraBusquedas()">
 			<div class="jumbotron">
 				<h1>Reto Liverpool</h1>
 				<p>Escribe el nombre de un producto que quieras buscar</p>
@@ -22,7 +22,7 @@
 				<p>
 					Buscaste: 
 					<div ng-repeat="search in searchHistory">
-						<span class="label label-primary">{{search.searchQuery}}</span>
+						<span class="btn btn-primary btn-lg">{{search.searchQuery | myFormat}}</span>
 					</div>
 				</p>
 			</div>
@@ -38,7 +38,7 @@
 		</div>
 
 	  <script>
-		angular.module('retoLiverpool', ['ngCookies'])
+		var app = angular.module('retoLiverpool', ['ngCookies'])
 			.controller('busqueda', ['$scope', '$http', '$cookies', function($scope, $http, $cookies) {
 				$scope.buscaProducto = function() {
 					var productoString = $scope.producto.replace(/\s/g, '+');
@@ -60,7 +60,7 @@
 					$scope.searchHistory = [];
 					angular.forEach(tmp.history, function(value) {
 								$scope.searchHistory.push(value);
-								console.log(value.searchQuery);
+								//console.log(value.searchQuery);
 							});
 					
 					
@@ -75,7 +75,6 @@
 							$scope.products = [];
 							angular.forEach(json.contents[0].mainContent[3].contents[0].records, function(value) {
 								$scope.products.push(value.records[0].attributes);
-								
 							});
 						})
 						.catch(function(response) {
@@ -85,7 +84,34 @@
 							console.log("Done");
 						});
 				};
+				$scope.muestraBusquedas = function() {
+					var cookieName = 'cookieProductosHistorial';
+
+					var prodSearchHistoryCookie = $cookies.get(cookieName);
+					
+					$scope.searchHistory = [];
+					
+					if ( prodSearchHistoryCookie ) {
+
+						var tmp = $cookies.getObject(cookieName);
+						angular.forEach(tmp.history, function(value) {
+								$scope.searchHistory.push(value);
+								//console.log(value.searchQuery);
+							});
+					} /*else {
+						var searchHistoryJson = {};
+						searchHistoryJson.history = [{'searchQuery' : productoString}];
+						$cookies.putObject(cookieName, searchHistoryJson);
+					}*/
+				};			
 			}]);
+			app.filter('myFormat', function() {
+				return function(input) {
+					//console.log("Cadena reemplazo: " + input.replace(/\+/g,' '));
+					return input.replace(/\+/g,' ');
+				};
+			});
+			
 	  </script>
 	</body>
 	
