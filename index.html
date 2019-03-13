@@ -29,10 +29,10 @@
 			<div class="container">
 				<div class="row">
 					<div class="panel panel-default col-md-3" ng-repeat="product in products">
-						<div class="panel-heading">{{product['product.displayName'][0]}}</div> 
+						<div class="panel-heading">{{product['productDisplayName'][0]}}</div> 
 						<div class="panel-body text-center">
-							<img ng-src="{{product['product.smallImage'][0]}}">
-							<p>Precio de lista: {{product['sku.list_Price'][0] | currency:"$ ":2}}</p>
+							<img ng-src="{{product['smallImage'][0]}}">
+							<p>Precio de lista: {{product['sku.listPrice'][0] | currency:"$ ":2}}</p>
 						</div>
 					</div>
 				</div>
@@ -76,7 +76,7 @@
 							//console.log(json.contents[0].mainContent[3].contents[0]);
 							$scope.products = [];
 							angular.forEach(json.contents[0].mainContent[3].contents[0].records, function(value) {
-								$scope.products.push(value.records[0].attributes);
+								$scope.products.push(value.records[0]);
 							});
 						})
 						.catch(function(response) {
@@ -117,7 +117,7 @@
 							//console.log(json.contents[0].mainContent[3].contents[0]);
 							$scope.products = [];
 							angular.forEach(json.contents[0].mainContent[3].contents[0].records, function(value) {
-								$scope.products.push(value.records[0].attributes);
+								$scope.products.push(value.records[0]);
 							});
 						})
 						.catch(function(response) {
